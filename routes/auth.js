@@ -24,11 +24,11 @@ router.post(
 
   //this is the func
   async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
       //here using await because if we dnt await here it will alway show the email error
       let user = await User.findOne({ emailId: req.body.emailId });
       if (user) {
@@ -57,8 +57,8 @@ router.post(
 
       const authtoken = jwt.sign(data, JWT_SECRET);
       // res.send(req.body);
-      // res.json({ authtoken });
-      res.status(200).json(user);
+      res.json({ authtoken });
+      // res.status(200).json(user);
     } catch (error) {
       return res.status(400).json({ error: "some error occured" });
     }
